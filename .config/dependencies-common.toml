@@ -1,0 +1,86 @@
+[versions]
+# build config
+compileSdk = "31"
+minSdk = "21"
+targetSdk = "31"
+java-major = "11"
+java = "11"
+config-plugin = "0.1.0"
+# official library
+kotlin = "1.5.31"
+kotlin-coroutines = "1.5.2"
+ktor = "1.6.7"
+android-plugin = "7.0.3"
+androidx-core = "1.6.0"
+androidx-appcompat = "1.3.1"
+lifecycle = "2.3.1"
+compose = "1.1.0-beta02"
+accompanist = "0.21.2-beta"
+hilt = "2.40.5"
+hilt-compose = "1.0.0-alpha03"
+room = "2.3.0"
+# test
+junit = "4.13.2"
+androidx-junit = "1.1.3"
+espresso-core = "3.4.0"
+androidx-test = "1.4.0"
+mockk = "1.11.0"
+
+[libraries]
+# official library
+appcompat = { module = "androidx.appcompat:appcompat", version.ref = "androidx-appcompat" }
+androidx-lifecycle-runtime-ktx = "androidx.lifecycle:lifecycle-runtime-ktx:2.4.0"
+kotlin-stdlib-jdk7 = { module = "org.jetbrains.kotlin:kotlin-stdlib-jdk7", version.ref = "kotlin" }
+kotlin-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlin-coroutines" }
+ktor-client-core = { module = "io.ktor:ktor-client-core", version.ref = "ktor" }
+ktor-client-cio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+# plugin dependencies
+plugin-source-android = { module = "com.android.tools.build:gradle", version.ref = "android-plugin" }
+plugin-source-kotlin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+# compose
+androidx-activity-compose = "androidx.activity:activity-compose:1.3.1"
+compose-uiTooling = { module = "androidx.compose.ui:ui-tooling", version.ref = "compose" }
+compose-material = { module = "androidx.compose.material:material", version.ref = "compose" }
+compose-icons-extended = { module = "androidx.compose.material:material-icons-extended", version.ref = "compose" }
+compose-paging = "androidx.paging:paging-compose:1.0.0-alpha11"
+compose-navigation = "androidx.navigation:navigation-compose:2.4.0-alpha04"
+compose-flowLayout = { module = "com.google.accompanist:accompanist-flowlayout", version.ref = "accompanist" }
+compose-navigationAnimiaton = { module = "com.google.accompanist:accompanist-navigation-animation", version.ref = "accompanist" }
+compose-placeholder = { module = "com.google.accompanist:accompanist-placeholder-material", version.ref = "accompanist" }
+# hilt
+hilt-runtime = { module = "com.google.dagger:hilt-android", version.ref = "hilt" }
+hilt-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hilt" }
+hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hilt-compose" }
+# room
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+# test
+junit = { module = "junit:junit", version.ref = "junit" }
+androidx-junit = { module = "androidx.test.ext:junit", version.ref = "androidx-junit" }
+espresso-core = { module = "androidx.test.espresso:espresso-core", version.ref = "espresso-core" }
+androidx-rules = { module = "androidx.test:rules", version.ref = "androidx-test" }
+androidx-orchestrator = { module = "androidx.test:orchestrator", version.ref = "androidx-test" }
+mockk = { module = "io.mockk:mockk", version.ref = "mockk" }
+kotlin-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlin-coroutines" }
+turbine = "app.cash.turbine:turbine:0.5.2"
+hilt-androidTesting = { module = "com.google.dagger:hilt-android-testing", version.ref = "hilt" }
+compose-test-junit4 = { module = "androidx.compose.ui:ui-test-junit4", version.ref = "compose" }
+compose-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "compose" }
+kakao = "io.github.kakaocup:kakao:3.0.5"
+
+[plugins]
+android-application = { id = "com.android.application", version.ref = "android-plugin" }
+android-library = { id = "com.android.library", version.ref = "android-plugin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
+hilt-android = { id = "dagger.hilt.android.plugin", version.ref = "hilt" }
+config-plugin = { id = "com.jady.config-plugin", version.ref = "config-plugin" }
+
+[bundles]
+test = ["compose-test-junit4", "compose-test-manifest", "kotlin-coroutines-test"]
+compose-core = ["androidx-activity-compose", "compose-uiTooling", "compose-material"]
+compose-navigation = ["compose-navigation", "compose-navigationAnimiaton", "hilt-navigation-compose"]
+compose-jetpack = ["compose-paging"]
+hilt-compiler = ["hilt-compiler"]
+room = ["room-runtime", "room-ktx"]
