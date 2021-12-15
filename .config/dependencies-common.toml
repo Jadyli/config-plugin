@@ -5,7 +5,7 @@ minSdk = "21"
 targetSdk = "31"
 java-major = "11"
 java = "11"
-config-plugin = "0.1.0"
+config-plugin = "0.1.2"
 # official library
 kotlin = "1.6.0"
 kotlin-coroutines = "1.6.0-RC2"
@@ -74,7 +74,7 @@ android-library = { id = "com.android.library", version.ref = "android-plugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-kapt = { id = "org.jetbrains.kotlin.kapt", version.ref = "kotlin" }
 hilt-android = { id = "dagger.hilt.android.plugin", version.ref = "hilt" }
-config-plugin = { id = "com.jady.config-plugin", version.ref = "config-plugin" }
+config-plugin = { id = "com.jady.lib.config-plugin", version.ref = "config-plugin" }
 
 [bundles]
 test = ["compose-test-junit4", "compose-test-manifest", "kotlin-coroutines-test"]
