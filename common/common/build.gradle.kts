@@ -9,6 +9,7 @@ plugins {
 
 dependencies {
     // official library
+    implementation(libs.bundles.compose.core)
     implementation(libs.hilt.runtime)
     kapt(libs.bundles.hilt.compiler)
 

@@ -5,6 +5,6 @@ ext {
     set("targetSdk", libs.versions.targetSdk.get())
     set("compileSdk", libs.versions.compileSdk.get())
     set("javaMajor", libs.versions.java.major.get())
-    set("java", libs.versions.java.asProvider().get())
+    set("javaVersion", libs.versions.java.asProvider().get())
     set("compose", libs.versions.compose.get())
 }

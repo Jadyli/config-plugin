@@ -18,14 +18,11 @@ android {
 dependencies {
     // official library
     implementation(libs.hilt.runtime)
-    api(libs.kotlin.stdlib.jdk7)
-    api(libs.kotlin.coroutines.core)
-    api(libs.androidx.lifecycle.runtime.ktx)
-    api(libs.appcompat)
-    api(libs.compose.icons.extended)
-    api(libs.bundles.compose.core)
-    api(libs.bundles.compose.navigation)
-    api(libs.bundles.compose.jetpack)
+    implementation(libs.kotlin.stdlib.jdk7)
+    implementation(libs.kotlin.coroutines.core)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.appcompat)
+    implementation(libs.bundles.compose.core)
 
     kapt(libs.bundles.hilt.compiler)
 

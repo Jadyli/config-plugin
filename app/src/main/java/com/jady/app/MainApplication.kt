@@ -13,10 +13,6 @@ import dagger.hilt.android.HiltAndroidApp
  */
 @HiltAndroidApp
 class MainApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-    }
-
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
         application = this

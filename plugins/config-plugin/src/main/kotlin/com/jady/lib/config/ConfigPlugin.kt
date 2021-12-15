@@ -11,6 +11,7 @@ import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import org.jetbrains.kotlin.gradle.utils.COMPILE_ONLY
 
 /**
  * @author jady
@@ -32,11 +33,13 @@ class ConfigPlugin : Plugin<Project> {
 
     private fun Project.configureLibraryPlugin() {
         configCommonPlugin()
+        configCommonDependencies()
         extensions.getByType<LibraryExtension>().configCommonExtension(this@configureLibraryPlugin)
     }
 
     private fun Project.configureAppPlugin() {
         configCommonPlugin()
+        configCommonDependencies()
         extensions.getByType<BaseAppModuleExtension>().run {
             configCommonExtension(this@configureAppPlugin)
 
@@ -115,7 +118,7 @@ class ConfigPlugin : Plugin<Project> {
 
         project.tasks.withType<KotlinCompile>().configureEach {
             kotlinOptions {
-                jvmTarget = project.property("java").toString()
+                jvmTarget = project.property("javaVersion").toString()
                 freeCompilerArgs += listOf(
                     "-Xopt-in=kotlin.ExperimentalStdlibApi",
                     "-Xopt-in=kotlin.RequiresOptIn",
@@ -130,5 +133,9 @@ class ConfigPlugin : Plugin<Project> {
     private fun Project.configCommonPlugin() {
         plugins.apply("org.jetbrains.kotlin.android")
         plugins.apply("org.jetbrains.kotlin.kapt")
+    }
+
+    private fun Project.configCommonDependencies() {
+        dependencies.add(COMPILE_ONLY, "androidx.compose.runtime:runtime:${project.property("compose").toString()}")
     }
 }
