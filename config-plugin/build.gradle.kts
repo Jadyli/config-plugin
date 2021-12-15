@@ -12,21 +12,12 @@ repositories {
 }
 
 group = "com.jady.lib"
-version = "0.1.0"
+version = "0.1.2"
 
 gradlePlugin {
-    plugins.register("config") {
-        id = "com.jady.config-plugin"
+    plugins.register("config-plugin") {
+        id = "com.jady.lib.config-plugin"
         implementationClass = "com.jady.lib.config.ConfigPlugin"
-    }
-}
-
-publishing {
-    repositories {
-        maven {
-            setUrl("../../local-repo")
-            name = "localRepo"
-        }
     }
 }
 
