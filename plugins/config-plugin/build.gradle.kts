@@ -1,8 +1,6 @@
 plugins {
     `kotlin-dsl`
     `maven-publish`
-    `java-gradle-plugin`
-    `kotlin-dsl-precompiled-script-plugins`
 }
 
 repositories {
