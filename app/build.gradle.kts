@@ -12,6 +12,15 @@ android {
         applicationId = "com.jady.app.composing"
         versionCode = 1
         versionName = "1.0"
+
+        splits {
+            abi {
+                isEnable = true
+                reset()
+                include("x86", "armeabi-v7a", "arm64-v8a")
+                isUniversalApk = false
+            }
+        }
     }
 }
 

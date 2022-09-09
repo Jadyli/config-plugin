@@ -43,17 +43,6 @@ class ConfigPlugin : Plugin<Project> {
         extensions.getByType<BaseAppModuleExtension>().run {
             configCommonExtension(this@configureAppPlugin)
 
-            defaultConfig {
-                splits {
-                    abi {
-                        isEnable = true
-                        reset()
-                        include("x86", "armeabi-v7a", "arm64-v8a")
-                        isUniversalApk = false
-                    }
-                }
-            }
-
             buildTypes {
                 getByName("debug") {
                     applicationIdSuffix = ".debug"
