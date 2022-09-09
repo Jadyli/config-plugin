@@ -9,4 +9,5 @@ plugins {
 dependencies {
     // test
     testCompileOnly(libs.junit)
+    implementation("androidx.compose.compiler:compiler:1.3.1")
 }
