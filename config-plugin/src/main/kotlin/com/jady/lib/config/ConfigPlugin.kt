@@ -89,10 +89,7 @@ class ConfigPlugin : Plugin<Project> {
         }
 
         composeOptions {
-            val composeCompilerVersion = project.findProperty("compose-compiler")
-            if (composeCompilerVersion != null) {
-                kotlinCompilerExtensionVersion = composeCompilerVersion.toString()
-            }
+            kotlinCompilerExtensionVersion = project.findProperty("composeCompiler")?.toString()
         }
 
         packagingOptions {
@@ -122,7 +119,8 @@ class ConfigPlugin : Plugin<Project> {
                     "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
                 )
                 if (useCompose) {
-                    freeCompilerArgs = freeCompilerArgs + "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi"
+                    freeCompilerArgs =
+                        freeCompilerArgs + "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi"
                 }
             }
         }
