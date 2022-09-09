@@ -85,7 +85,10 @@ class ConfigPlugin : Plugin<Project> {
         }
 
         composeOptions {
-            kotlinCompilerExtensionVersion = project.property("compose").toString()
+            val composeCompilerVersion = project.findProperty("compose-compiler")
+            if (composeCompilerVersion != null) {
+                kotlinCompilerExtensionVersion = composeCompilerVersion.toString()
+            }
         }
 
         packagingOptions {
