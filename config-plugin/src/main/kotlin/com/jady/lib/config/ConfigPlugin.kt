@@ -56,13 +56,15 @@ class ConfigPlugin : Plugin<Project> {
     }
 
     private fun BaseExtension.configCommonExtension(project: Project) {
-        setCompileSdkVersion(project.property("compileSdk").toString().toInt())
+        val useCompose = null != project.findProperty("compose")
+        setCompileSdkVersion(project.findProperty("compileSdk")?.toString()?.toInt() ?: 33)
 
         defaultConfig {
-            minSdk = project.property("minSdk").toString().toInt()
-            targetSdk = project.property("targetSdk").toString().toInt()
-            testInstrumentationRunner = project.property("testInstrumentationRunner").toString()
-            vectorDrawables.useSupportLibrary = true
+            minSdk = project.findProperty("minSdk")?.toString()?.toInt() ?: 21
+            targetSdk = project.findProperty("targetSdk")?.toString()?.toInt() ?: 33
+            testInstrumentationRunner = project.findProperty("testInstrumentationRunner")?.toString()
+            vectorDrawables.useSupportLibrary =
+                project.findProperty("vectorDrawableSupportLibrary") as? Boolean ?: false
         }
 
         buildTypes {
@@ -81,11 +83,15 @@ class ConfigPlugin : Plugin<Project> {
         }
 
         buildFeatures.apply {
-            compose = true
+            if (useCompose) {
+                compose = true
+            }
         }
 
         composeOptions {
-            kotlinCompilerExtensionVersion = project.property("compose").toString()
+            if (useCompose) {
+                kotlinCompilerExtensionVersion = project.property("compose").toString()
+            }
         }
 
         packagingOptions {
@@ -108,13 +114,15 @@ class ConfigPlugin : Plugin<Project> {
         project.tasks.withType<KotlinCompile>().configureEach {
             kotlinOptions {
                 jvmTarget = project.property("javaVersion").toString()
-                freeCompilerArgs += listOf(
+                freeCompilerArgs = freeCompilerArgs + listOf(
                     "-Xopt-in=kotlin.ExperimentalStdlibApi",
                     "-Xopt-in=kotlin.RequiresOptIn",
                     "-Xopt-in=kotlin.contracts.ExperimentalContracts",
-                    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                    "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi"
+                    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
                 )
+                if (useCompose) {
+                    freeCompilerArgs = freeCompilerArgs + "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi"
+                }
             }
         }
     }
@@ -125,6 +133,12 @@ class ConfigPlugin : Plugin<Project> {
     }
 
     private fun Project.configCommonDependencies() {
-        dependencies.add(COMPILE_ONLY, "androidx.compose.runtime:runtime:${project.property("compose").toString()}")
+        val useCompose = null != project.findProperty("compose")
+        if (useCompose) {
+            dependencies.add(
+                COMPILE_ONLY,
+                "androidx.compose.runtime:runtime:${project.property("compose").toString()}"
+            )
+        }
     }
 }

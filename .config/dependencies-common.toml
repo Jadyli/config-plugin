@@ -5,7 +5,7 @@ minSdk = "21"
 targetSdk = "31"
 java-major = "11"
 java = "11"
-config-plugin = "0.1.0"
+config-plugin = "0.1.4"
 # official library
 kotlin = "1.7.10"
 kotlin-coroutines = "1.6.4"
