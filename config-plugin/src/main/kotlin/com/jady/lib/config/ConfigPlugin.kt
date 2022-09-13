@@ -44,10 +44,6 @@ class ConfigPlugin : Plugin<Project> {
             configCommonExtension(this@configureAppPlugin)
 
             buildTypes {
-                getByName("debug") {
-                    applicationIdSuffix = ".debug"
-                    versionNameSuffix = "-debug"
-                }
                 getByName("release") {
                     isShrinkResources = true
                 }
