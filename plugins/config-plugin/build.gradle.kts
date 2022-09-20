@@ -10,7 +10,7 @@ repositories {
 }
 
 group = "com.jady.lib"
-version = "0.1.3"
+version = "0.1.8"
 
 gradlePlugin {
     plugins.register("config") {

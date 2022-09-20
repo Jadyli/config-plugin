@@ -17,7 +17,7 @@ pluginManagement {
                     useModule("com.google.dagger:hilt-android-gradle-plugin:2.40.5")
                 }
                 "com.jady.lib.config-plugin" -> {
-                    useModule("com.github.Jadyli.composing:config-plugin:0.1.2")
+                    useModule("com.github.Jadyli.composing:config-plugin:0.1.8")
                 }
                 "org.jetbrains.kotlin.android" -> {
                     useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")

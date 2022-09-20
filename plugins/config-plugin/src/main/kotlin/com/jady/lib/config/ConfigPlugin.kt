@@ -5,6 +5,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import java.io.File
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -44,10 +45,6 @@ class ConfigPlugin : Plugin<Project> {
             configCommonExtension(this@configureAppPlugin)
 
             buildTypes {
-                getByName("debug") {
-                    applicationIdSuffix = ".debug"
-                    versionNameSuffix = "-debug"
-                }
                 getByName("release") {
                     isShrinkResources = true
                 }
@@ -56,13 +53,15 @@ class ConfigPlugin : Plugin<Project> {
     }
 
     private fun BaseExtension.configCommonExtension(project: Project) {
-        setCompileSdkVersion(project.property("compileSdk").toString().toInt())
+        val useCompose = null != project.findProperty("compose")
+        setCompileSdkVersion(project.findProperty("compileSdk")?.toString()?.toInt() ?: 33)
 
         defaultConfig {
-            minSdk = project.property("minSdk").toString().toInt()
-            targetSdk = project.property("targetSdk").toString().toInt()
-            testInstrumentationRunner = project.property("testInstrumentationRunner").toString()
-            vectorDrawables.useSupportLibrary = true
+            minSdk = project.findProperty("minSdk")?.toString()?.toInt() ?: 21
+            targetSdk = project.findProperty("targetSdk")?.toString()?.toInt() ?: 33
+            testInstrumentationRunner = project.findProperty("testInstrumentationRunner")?.toString()
+            vectorDrawables.useSupportLibrary =
+                project.findProperty("vectorDrawableSupportLibrary") as? Boolean ?: false
         }
 
         buildTypes {
@@ -78,14 +77,27 @@ class ConfigPlugin : Plugin<Project> {
         @Suppress("deprecation")
         lintOptions {
             isAbortOnError = false
+            isCheckReleaseBuilds = false
+            File("lint.xml").takeIf { it.exists() }?.let {
+                lintConfig = it
+            }
         }
 
         buildFeatures.apply {
-            compose = true
+            if (useCompose) {
+                compose = true
+            }
+        }
+
+        sourceSets {
+            all {
+                jniLibs.srcDirs("libs")
+                java.srcDirs("src/main/kotlin")
+            }
         }
 
         composeOptions {
-                kotlinCompilerExtensionVersion = project.findProperty("composeCompiler")?.toString()
+            kotlinCompilerExtensionVersion = project.findProperty("composeCompiler")?.toString()
         }
 
         packagingOptions {
@@ -96,6 +108,9 @@ class ConfigPlugin : Plugin<Project> {
 
         testOptions {
             unitTests.isIncludeAndroidResources = true
+            unitTests.all {
+                it.jvmArgs("-noverify")
+            }
         }
 
         compileOptions {
@@ -108,13 +123,16 @@ class ConfigPlugin : Plugin<Project> {
         project.tasks.withType<KotlinCompile>().configureEach {
             kotlinOptions {
                 jvmTarget = project.property("javaVersion").toString()
-                freeCompilerArgs += listOf(
+                freeCompilerArgs = freeCompilerArgs + listOf(
                     "-Xopt-in=kotlin.ExperimentalStdlibApi",
                     "-Xopt-in=kotlin.RequiresOptIn",
                     "-Xopt-in=kotlin.contracts.ExperimentalContracts",
-                    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                    "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi"
+                    "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi"
                 )
+                if (useCompose) {
+                    freeCompilerArgs =
+                        freeCompilerArgs + "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi"
+                }
             }
         }
     }
@@ -125,6 +143,12 @@ class ConfigPlugin : Plugin<Project> {
     }
 
     private fun Project.configCommonDependencies() {
-        dependencies.add(COMPILE_ONLY, "androidx.compose.runtime:runtime:${project.property("compose").toString()}")
+        val useCompose = null != project.findProperty("compose")
+        if (useCompose) {
+            dependencies.add(
+                COMPILE_ONLY,
+                "androidx.compose.runtime:runtime:${project.property("compose").toString()}"
+            )
+        }
     }
 }
