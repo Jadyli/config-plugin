@@ -5,6 +5,7 @@ import com.android.build.gradle.BaseExtension
 import com.android.build.gradle.LibraryExtension
 import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
+import java.io.File
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -76,11 +77,22 @@ class ConfigPlugin : Plugin<Project> {
         @Suppress("deprecation")
         lintOptions {
             isAbortOnError = false
+            isCheckReleaseBuilds = false
+            File("lint.xml").takeIf { it.exists() }?.let {
+                lintConfig = it
+            }
         }
 
         buildFeatures.apply {
             if (useCompose) {
                 compose = true
+            }
+        }
+
+        sourceSets {
+            all {
+                jniLibs.srcDirs("libs")
+                java.srcDirs("src/main/kotlin")
             }
         }
 
@@ -96,6 +108,9 @@ class ConfigPlugin : Plugin<Project> {
 
         testOptions {
             unitTests.isIncludeAndroidResources = true
+            unitTests.all {
+                it.jvmArgs("-noverify")
+            }
         }
 
         compileOptions {
