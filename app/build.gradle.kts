@@ -27,10 +27,10 @@ android {
 dependencies {
     // official library
     implementation(libs.hilt.runtime)
-    implementation(libs.kotlin.stdlib.jdk7)
+    implementation(libs.kotlin.stdlib)
     implementation(libs.kotlin.coroutines.core)
     implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.appcompat)
+    implementation(libs.androidx.appcompat)
     implementation(libs.bundles.compose.core)
 
     kapt(libs.bundles.hilt.compiler)

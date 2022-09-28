@@ -40,6 +40,9 @@ dependencyResolutionManagement {
         create("libs") {
             from(files("${rootDir.path}/.config/dependencies-common.toml"))
         }
+        create("bizLibs") {
+            from(files("${rootDir.path}/.config/dependencies-biz.toml"))
+        }
     }
 }
 
