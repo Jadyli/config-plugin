@@ -26,7 +26,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.github.Jadyli.composing:config-plugin:0.1.2")
+        classpath("com.github.Jadyli.composing:config-plugin:0.1.8")
     }
 }
 ```
@@ -45,7 +45,7 @@ pluginManagement {
         eachPlugin {
             when (requested.id.id) {
                 "com.jady.lib.config-plugin" -> {
-                    useModule("com.github.Jadyli.composing:config-plugin:0.1.2")
+                    useModule("com.github.Jadyli.composing:config-plugin:0.1.8")
                 }
             }
         }
