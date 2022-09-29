@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.config.plugin)
+    alias(libs.plugins.kotlin.kapt)
 }
 
 dependencies {
