@@ -139,7 +139,6 @@ class ConfigPlugin : Plugin<Project> {
 
     private fun Project.configCommonPlugin() {
         plugins.apply("org.jetbrains.kotlin.android")
-        plugins.apply("org.jetbrains.kotlin.kapt")
     }
 
     private fun Project.configCommonDependencies() {

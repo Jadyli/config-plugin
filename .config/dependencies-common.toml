@@ -3,7 +3,7 @@
 compileSdk = "33"
 java-major = "11"
 java = "11"
-config-plugin = "0.1.8"
+config-plugin = "0.1.9"
 # kotlin
 kotlin = "1.7.10"
 kotlin-serialization = "1.4.0"
