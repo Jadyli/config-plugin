@@ -92,7 +92,8 @@ class ConfigPlugin : Plugin<Project> {
         sourceSets {
             all {
                 jniLibs.srcDirs("libs")
-                java.srcDirs("src/main/kotlin")
+                res.srcDirs("src/main/res")
+                java.srcDirs("src/main/kotlin", "src/main/java")
             }
         }
 

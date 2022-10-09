@@ -14,16 +14,16 @@ pluginManagement {
         eachPlugin {
             when (requested.id.id) {
                 "dagger.hilt.android.plugin" -> {
-                    useModule("com.google.dagger:hilt-android-gradle-plugin:2.40.5")
+                    useModule("com.google.dagger:hilt-android-gradle-plugin:${requested.version}")
                 }
                 "com.jady.lib.config-plugin" -> {
-                    useModule("com.github.Jadyli.composing:config-plugin:0.1.9")
+                    useModule("com.github.Jadyli.composing:config-plugin:${requested.version}")
                 }
                 "org.jetbrains.kotlin.android" -> {
-                    useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.31")
+                    useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
                 }
                 "com.android.application" -> {
-                    useModule("com.android.tools.build:gradle:7.0.3")
+                    useModule("com.android.tools.build:gradle:${requested.version}")
                 }
             }
         }
