@@ -49,7 +49,9 @@ class ConfigPlugin : Plugin<Project> {
             defaultConfig.proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 
             buildTypes {
-                isShrinkResources = true
+                getByName("release") {
+                    isShrinkResources = true
+                }
             }
         }
     }
