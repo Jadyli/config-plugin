@@ -35,7 +35,10 @@ class ConfigPlugin : Plugin<Project> {
     private fun Project.configureLibraryPlugin() {
         configCommonPlugin()
         configCommonDependencies()
-        extensions.getByType<LibraryExtension>().configCommonExtension(this@configureLibraryPlugin)
+        extensions.getByType<LibraryExtension>().run {
+            configCommonExtension(this@configureLibraryPlugin)
+            defaultConfig.consumerProguardFiles("proguard-rules.pro")
+        }
     }
 
     private fun Project.configureAppPlugin() {
@@ -43,11 +46,10 @@ class ConfigPlugin : Plugin<Project> {
         configCommonDependencies()
         extensions.getByType<BaseAppModuleExtension>().run {
             configCommonExtension(this@configureAppPlugin)
+            defaultConfig.proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
 
             buildTypes {
-                getByName("release") {
-                    isShrinkResources = true
-                }
+                isShrinkResources = true
             }
         }
     }
@@ -70,7 +72,6 @@ class ConfigPlugin : Plugin<Project> {
             }
             getByName("release") {
                 isMinifyEnabled = true
-                proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             }
         }
 
