@@ -33,8 +33,6 @@ class ConfigPlugin : Plugin<Project> {
     }
 
     private fun Project.configureLibraryPlugin() {
-        configCommonPlugin()
-        configCommonDependencies()
         extensions.getByType<LibraryExtension>().run {
             configCommonExtension(this@configureLibraryPlugin)
             defaultConfig.consumerProguardFiles("proguard-rules.pro")
@@ -42,8 +40,6 @@ class ConfigPlugin : Plugin<Project> {
     }
 
     private fun Project.configureAppPlugin() {
-        configCommonPlugin()
-        configCommonDependencies()
         extensions.getByType<BaseAppModuleExtension>().run {
             configCommonExtension(this@configureAppPlugin)
             defaultConfig.proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -57,7 +53,7 @@ class ConfigPlugin : Plugin<Project> {
     }
 
     private fun BaseExtension.configCommonExtension(project: Project) {
-        val useCompose = null != project.findProperty("compose")
+        val useCompose = null != project.findProperty("composeCompiler")
         setCompileSdkVersion(project.findProperty("compileSdk")?.toString()?.toInt() ?: 33)
 
         defaultConfig {
@@ -138,20 +134,6 @@ class ConfigPlugin : Plugin<Project> {
                         freeCompilerArgs + "-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi"
                 }
             }
-        }
-    }
-
-    private fun Project.configCommonPlugin() {
-        plugins.apply("org.jetbrains.kotlin.android")
-    }
-
-    private fun Project.configCommonDependencies() {
-        val useCompose = null != project.findProperty("compose")
-        if (useCompose) {
-            dependencies.add(
-                COMPILE_ONLY,
-                "androidx.compose.runtime:runtime:${project.property("compose").toString()}"
-            )
         }
     }
 }

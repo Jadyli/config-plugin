@@ -26,7 +26,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("com.github.Jadyli.composing:config-plugin:0.1.8")
+        classpath("com.github.Jadyli.composing:config-plugin:0.1.13")
     }
 }
 ```
@@ -45,7 +45,7 @@ pluginManagement {
         eachPlugin {
             when (requested.id.id) {
                 "com.jady.lib.config-plugin" -> {
-                    useModule("com.github.Jadyli.composing:config-plugin:0.1.8")
+                    useModule("com.github.Jadyli.composing:config-plugin:0.1.13")
                 }
             }
         }
@@ -66,7 +66,7 @@ targetSdk=31
 compileSdk=31
 javaMajor=11
 javaVersion=11
-compose=1.1.0-beta04
+composeCompiler=1.1.0-beta04
 ```
 
 
@@ -81,7 +81,7 @@ ext {
     set("compileSdk", libs.versions.compileSdk.get())
     set("javaMajor", libs.versions.java.major.get())
     set("javaVersion", libs.versions.java.asProvider().get())
-    set("compose", libs.versions.compose.get())
+    set("composeCompiler", libs.versions.compose.get())
 }
 ```
 ​
