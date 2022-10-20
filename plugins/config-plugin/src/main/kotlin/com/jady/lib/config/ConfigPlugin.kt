@@ -35,7 +35,10 @@ class ConfigPlugin : Plugin<Project> {
     private fun Project.configureLibraryPlugin() {
         extensions.getByType<LibraryExtension>().run {
             configCommonExtension(this@configureLibraryPlugin)
-            defaultConfig.consumerProguardFiles("proguard-rules.pro")
+            defaultConfig {
+                consumerProguardFiles("proguard-rules.pro")
+                proguardFiles("proguard-rules.pro")
+            }
         }
     }
 
@@ -89,7 +92,7 @@ class ConfigPlugin : Plugin<Project> {
         }
 
         sourceSets {
-            all {
+            getByName("main") {
                 jniLibs.srcDirs("libs")
                 res.srcDirs("src/main/res")
                 java.srcDirs("src/main/kotlin", "src/main/java")
