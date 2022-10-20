@@ -19,6 +19,7 @@ ktlint = "11.0.0"
 dependencies-update = "0.42.0"
 booster = "4.13.0"
 rocketx = "1.1.1"
+gradle-publish = "1.0.0"
 # androidx
 androidx-appcompat = "1.5.1"
 androidx-annotation = "1.5.0"
@@ -303,6 +304,7 @@ tinker = { id = "com.tencent.tinker.patch", version.ref = "tinker" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 booster = { id = "com.didiglobal.booster", version.ref = "booster" }
 rocketx = { id = "com.rocketx", version.ref = "rocketx" }
+gradle-publish = { id = "com.gradle.plugin-publish", version.ref = "gradle-publish" }
 
 [bundles]
 test = ["compose-test-junit4", "compose-test-manifest", "kotlin-coroutines-test"]

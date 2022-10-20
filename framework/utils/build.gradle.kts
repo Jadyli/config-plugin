@@ -8,7 +8,7 @@ plugins {
 }
 
 dependencies {
+    implementation(libs.bundles.compose.core)
     // test
     testCompileOnly(libs.junit)
-    implementation("androidx.compose.compiler:compiler:1.3.1")
 }

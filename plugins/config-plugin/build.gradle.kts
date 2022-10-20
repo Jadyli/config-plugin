@@ -1,6 +1,9 @@
+@file:Suppress("UnstableApiUsage")
+
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    `kotlin-dsl`
-    `maven-publish`
+    alias(libs.plugins.kotlin.dsl)
+    alias(libs.plugins.gradle.publish)
 }
 
 repositories {
@@ -16,7 +19,15 @@ gradlePlugin {
     plugins.register("config") {
         id = "com.jady.lib.config-plugin"
         implementationClass = "com.jady.lib.config.ConfigPlugin"
+        displayName = "Common config plugin for Android"
+        description = "A plugin help you to config android extension"
     }
+}
+
+pluginBundle {
+    website = "https://github.com/Jadyli/composing"
+    vcsUrl = "https://github.com/Jadyli/composing.git"
+    tags = arrayListOf("android", "config")
 }
 
 publishing {

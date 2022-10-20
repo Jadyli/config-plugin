@@ -19,12 +19,6 @@ pluginManagement {
                 "com.jady.lib.config-plugin" -> {
                     useModule("com.github.Jadyli.composing:config-plugin:${requested.version}")
                 }
-                "org.jetbrains.kotlin.android" -> {
-                    useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
-                }
-                "com.android.application" -> {
-                    useModule("com.android.tools.build:gradle:${requested.version}")
-                }
             }
         }
     }
