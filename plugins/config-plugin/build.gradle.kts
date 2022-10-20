@@ -6,12 +6,6 @@ plugins {
     alias(libs.plugins.gradle.publish)
 }
 
-repositories {
-    google()
-    mavenCentral()
-    gradlePluginPortal()
-}
-
 group = "com.jady.lib"
 version = "0.1.14"
 
