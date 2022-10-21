@@ -2,8 +2,8 @@
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.kotlin.dsl)
-    alias(libs.plugins.gradle.publish)
+    alias(commonLibs.plugins.kotlin.dsl)
+    alias(commonLibs.plugins.gradle.publish)
 }
 
 group = "com.jady.lib"
@@ -34,6 +34,6 @@ publishing {
 }
 
 dependencies {
-    implementation(libs.plugin.source.android)
-    implementation(libs.plugin.source.kotlin)
+    implementation(commonLibs.plugin.source.android)
+    implementation(commonLibs.plugin.source.kotlin)
 }

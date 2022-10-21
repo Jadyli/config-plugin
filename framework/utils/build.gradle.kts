@@ -2,13 +2,13 @@
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.config.plugin)
+    alias(commonLibs.plugins.android.library)
+    alias(commonLibs.plugins.kotlin.android)
+    alias(commonLibs.plugins.config.plugin)
 }
 
 dependencies {
-    implementation(libs.bundles.compose.core)
+    implementation(commonLibs.bundles.compose.core)
     // test
-    testCompileOnly(libs.junit)
+    testCompileOnly(commonLibs.junit)
 }

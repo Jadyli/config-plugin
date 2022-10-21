@@ -31,7 +31,7 @@ dependencyResolutionManagement {
         maven { setUrl("https://jitpack.io") }
     }
     versionCatalogs {
-        create("libs") {
+        create("commonLibs") {
             from(files("${rootDir.path}/.config/dependencies-common.toml"))
         }
         create("bizLibs") {

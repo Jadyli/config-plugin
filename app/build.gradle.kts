@@ -2,11 +2,11 @@
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
-    alias(libs.plugins.hilt.android)
-    alias(libs.plugins.config.plugin)
-    alias(libs.plugins.kotlin.kapt)
+    alias(commonLibs.plugins.android.application)
+    alias(commonLibs.plugins.kotlin.android)
+    alias(commonLibs.plugins.hilt.android)
+    alias(commonLibs.plugins.config.plugin)
+    alias(commonLibs.plugins.kotlin.kapt)
 }
 
 android {
@@ -28,18 +28,18 @@ android {
 
 dependencies {
     // official library
-    implementation(libs.hilt.runtime)
-    implementation(libs.kotlin.stdlib)
-    implementation(libs.kotlin.coroutines.core)
-    implementation(libs.androidx.lifecycle.runtime.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.bundles.compose.core)
+    implementation(commonLibs.hilt.runtime)
+    implementation(commonLibs.kotlin.stdlib)
+    implementation(commonLibs.kotlin.coroutines.core)
+    implementation(commonLibs.androidx.lifecycle.runtime.ktx)
+    implementation(commonLibs.androidx.appcompat)
+    implementation(commonLibs.bundles.compose.core)
 
-    kapt(libs.bundles.hilt.compiler)
+    kapt(commonLibs.bundles.hilt.compiler)
 
     // other module
     implementation(projects.common.common)
 
     // test
-    testImplementation(libs.bundles.test)
+    testImplementation(commonLibs.bundles.test)
 }
