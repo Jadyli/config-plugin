@@ -10,8 +10,6 @@
 
 插件使用案例：[plugin/sample](https://github.com/Jadyli/composing/tree/feature/sample)
 
-插件源码： [feature/plugin](https://github.com/Jadyli/composing/tree/feature/plugin) 
-
 ### 1.1 添加依赖
 
 目前已发布到 gradle 插件仓库：[config-plugin](https://plugins.gradle.org/plugin/io.github.jadyli.config-plugin)。
