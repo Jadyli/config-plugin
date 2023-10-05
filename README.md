@@ -8,7 +8,7 @@
 
 ## 1 插件使用
 
-插件使用案例：[plugin/sample](https://github.com/Jadyli/composing/tree/feature/sample)
+插件使用参考本仓库的编译配置文件。
 
 ### 1.1 添加依赖
 
@@ -24,7 +24,7 @@ buildscript {
     }
 
     dependencies {
-        classpath("io.github.jadyli:config-plugin:0.1.14")
+       classpath("io.github.jadyli:config-plugin:0.1.16")
     }
 }
 ```
@@ -41,7 +41,7 @@ pluginManagement {
         eachPlugin {
             when (requested.id.id) {
                 "io.github.jadyli.config-plugin" -> {
-                    useModule("io.github.jadyli:config-plugin:0.1.14")
+                   useModule("io.github.jadyli:config-plugin:0.1.16")
                 }
             }
         }
@@ -49,48 +49,38 @@ pluginManagement {
 }
 ```
 
-### 1.2 配置 sdk 版本：
+### 1.2 应用插件，配置参数
 
-**方式一：在项目根目录 gradle.properties 文件中配置**
-
-```kotlin
-minSdk=21
-targetSdk=31
-compileSdk=31
-javaMajor=11
-javaVersion=11
-composeCompiler=1.1.0-beta04
-```
-
-**方式二(推荐)：在项目根目录 build.gradle.kts 中配置**
-
-```kotlin
-// 这里是使用 version catalog 的写法，也可以直接替换成对应的版本号，参考方式一
-ext {
-    set("minSdk", libs.versions.minSdk.get())
-    set("targetSdk", libs.versions.targetSdk.get())
-    set("compileSdk", libs.versions.compileSdk.get())
-    set("javaMajor", libs.versions.java.major.get())
-    set("javaVersion", libs.versions.java.asProvider().get())
-    set("composeCompiler", libs.versions.compose.get())
-}
-```
-
-这些都是必填项（compose 也是的，插件会默认添加对应版本的 compose 依赖和配置，如果实在不需要可以评论留言，后续版本可以加判断去掉）。
-
-### 1.3 模块里应用
+参考本仓库 build.gradle.kts, 在根目录 build 文件或者模块 build 文件应用插件。
 
 ```kotlin
 // 方式一（推荐），配合 version catalog 可以写成 alias(libs.plugins.config.plugin)
 plugins {
-    id("io.github.jadyli.config-plugin")
+   id("io.github.jadyli.config-plugin")
 }
 
 // 方式二
-apply(from = "io.github.jadyli.config-plugin")
+apply(plugin = "io.github.jadyli.config-plugin")
 ```
 
-添加完成后，一个 library 的配置文件将会非常简洁，只需要添加一些模块需要的插件和依赖就好了（下面的例子用了 toml）。
+然后配置参数：
+
+```kotlin
+extensions.configure<ConfigExtension> {
+   version {
+      minSdk = bizLibs.versions.minSdk.get().toInt()
+      targetSdk = bizLibs.versions.targetSdk.get().toInt()
+      compileSdk = libs.versions.compileSdk.get().toInt()
+      java = libs.versions.java.asProvider().get().toInt()
+      kotlin = sharedLibs.versions.kotlin.asProvider().get()
+      composeCompiler = sharedLibs.versions.compose.compiler.get()
+   }
+   vectorDrawableSupportLibrary = true
+   testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+}
+```
+
+使用插件后，一个 library 的配置文件将会非常简洁，只需要添加一些模块需要的插件和依赖就好了（下面的例子用了 toml）。
 
 ```kotlin
 @file:Suppress("UnstableApiUsage")
@@ -99,7 +89,6 @@ apply(from = "io.github.jadyli.config-plugin")
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.hilt.android)
-    alias(libs.plugins.config.plugin)
 }
 
 dependencies {
@@ -212,8 +201,8 @@ plugins {
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(commonLibs.plugins.kotlin.dsl)
-    alias(commonLibs.plugins.gradle.publish)
+   alias(androidCommonLibs.plugins.kotlin.dsl)
+   alias(androidCommonLibs.plugins.gradle.publish)
 }
 
 group = "io.github.jadyli"
@@ -244,8 +233,8 @@ publishing {
 }
 
 dependencies {
-    implementation(commonLibs.plugin.source.android)
-    implementation(commonLibs.plugin.source.kotlin)
+   implementation(androidCommonLibs.plugin.source.android)
+   implementation(androidCommonLibs.plugin.source.kotlin)
 }
 
 ```
@@ -358,8 +347,8 @@ includeBuild("../ProjectB"){
 
 ```kotlin
 plugins {
-    alias(commonLibs.plugins.kotlin.dsl)
-    alias(commonLibs.plugins.gradle.publish)
+   alias(androidCommonLibs.plugins.kotlin.dsl)
+   alias(androidCommonLibs.plugins.gradle.publish)
 }
 
 group = "io.github.jadyli"

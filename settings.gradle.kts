@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
     repositories {
@@ -13,11 +12,23 @@ pluginManagement {
     resolutionStrategy {
         eachPlugin {
             when (requested.id.id) {
+                "com.android.application" -> {
+                    useModule("com.android.tools.build:gradle:${requested.version}")
+                }
+                "com.android.library" -> {
+                    useModule("com.android.tools.build:gradle:${requested.version}")
+                }
+                "org.gradle.kotlin.kotlin-dsl" -> {
+                    useModule("org.gradle.kotlin:gradle-kotlin-dsl-plugins:${requested.version}")
+                }
+                "org.jetbrains.kotlin.android" -> {
+                    useModule("org.jetbrains.kotlin:kotlin-gradle-plugin:${requested.version}")
+                }
                 "dagger.hilt.android.plugin" -> {
                     useModule("com.google.dagger:hilt-android-gradle-plugin:${requested.version}")
                 }
-                "com.jady.lib.config-plugin" -> {
-                    useModule("com.github.Jadyli.composing:config-plugin:${requested.version}")
+                "io.github.jadyli.config-plugin" -> {
+                    useModule("io.github.jadyli:config-plugin:${requested.version}")
                 }
             }
         }
@@ -31,12 +42,9 @@ dependencyResolutionManagement {
         maven { setUrl("https://jitpack.io") }
     }
     versionCatalogs {
-        create("commonLibs") {
-            from(files("${rootDir.path}/.config/dependencies-common.toml"))
-        }
-        create("bizLibs") {
-            from(files("${rootDir.path}/.config/dependencies-biz.toml"))
-        }
+        create("androidCommonLibs") { from(files("${rootDir.path}/.config/dependencies-android-common.toml")) }
+        create("androidBizLibs") { from(files("${rootDir.path}/.config/dependencies-android-biz.toml")) }
+        create("sharedCommonLibs") { from(files("${rootDir.path}/.config/dependencies-shared-common.toml")) }
     }
 }
 

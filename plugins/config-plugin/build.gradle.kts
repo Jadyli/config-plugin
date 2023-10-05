@@ -2,16 +2,16 @@
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(commonLibs.plugins.kotlin.dsl)
-    alias(commonLibs.plugins.gradle.publish)
+    `kotlin-dsl`
+    alias(androidCommonLibs.plugins.gradle.publish)
 }
 
-group = "com.jady.lib"
-version = "0.1.14"
+group = "io.github.jadyli"
+version = "0.1.16"
 
 gradlePlugin {
     plugins.register("config") {
-        id = "com.jady.lib.config-plugin"
+        id = "io.github.jadyli.config-plugin"
         implementationClass = "com.jady.lib.config.ConfigPlugin"
         displayName = "Common config plugin for Android"
         description = "A plugin help you to config android extension"
@@ -33,7 +33,21 @@ publishing {
     }
 }
 
+kotlin {
+    jvmToolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(11))
+    }
+}
+
 dependencies {
-    implementation(commonLibs.plugin.source.android)
-    implementation(commonLibs.plugin.source.kotlin)
+    implementation(androidCommonLibs.plugin.source.android)
+    implementation(sharedCommonLibs.plugin.source.kotlin)
+    implementation(sharedCommonLibs.plugin.source.compose)
+    compileOnly(gradleApi())
 }

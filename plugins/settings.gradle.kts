@@ -1,6 +1,5 @@
 @file:Suppress("UnstableApiUsage")
 
-enableFeaturePreview("VERSION_CATALOGS")
 enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
 pluginManagement {
     repositories {
@@ -19,9 +18,9 @@ dependencyResolutionManagement {
         maven { setUrl("https://jitpack.io") }
     }
     versionCatalogs {
-        create("commonLibs") {
-            from(files("${rootDir.path}/../.config/dependencies-common.toml"))
-        }
+        create("androidCommonLibs") { from(files("${rootDir.path}/../.config/dependencies-android-common.toml")) }
+        create("androidBizLibs") { from(files("${rootDir.path}/../.config/dependencies-android-biz.toml")) }
+        create("sharedCommonLibs") { from(files("${rootDir.path}/../.config/dependencies-shared-common.toml")) }
     }
 }
 

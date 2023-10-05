@@ -2,13 +2,17 @@
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    alias(commonLibs.plugins.android.library)
-    alias(commonLibs.plugins.kotlin.android)
-    alias(commonLibs.plugins.config.plugin)
+    alias(androidCommonLibs.plugins.android.library)
+    alias(sharedCommonLibs.plugins.kotlin.android)
+    alias(androidCommonLibs.plugins.config.plugin)
+}
+
+android {
+    namespace = "com.jady.utils"
 }
 
 dependencies {
-    implementation(commonLibs.bundles.compose.core)
+    implementation(sharedCommonLibs.bundles.compose.core)
     // test
-    testCompileOnly(commonLibs.junit)
+    testCompileOnly(androidCommonLibs.junit)
 }
