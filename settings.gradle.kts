@@ -48,7 +48,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "composing"
+rootProject.name = "config-plugin"
 include(
     ":app",
     ":common:common",
