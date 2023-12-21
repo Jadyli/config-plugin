@@ -26,5 +26,6 @@ class VersionExtension {
     var compileSdk = 33
     var java = 11
     var kotlin = "1.9.10"
-    var composeCompiler: String? = null
+    var composePluginCompiler: String? = null
+    var composeAndroidxCompiler: String? = null
 }

@@ -3,7 +3,7 @@
 compileSdk = "34"
 java-major = "11"
 java = "11"
-config-plugin = "0.1.16"
+config-plugin = "0.1.17"
 # billing
 google-billing = "4.1.0"
 # plugin

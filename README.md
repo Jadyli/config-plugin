@@ -20,7 +20,7 @@ buildscript {
     }
 
     dependencies {
-       classpath("io.github.jadyli:config-plugin:0.1.16")
+       classpath("io.github.jadyli:config-plugin:0.1.17")
     }
 }
 ```
@@ -37,7 +37,7 @@ pluginManagement {
         eachPlugin {
             when (requested.id.id) {
                 "io.github.jadyli.config-plugin" -> {
-                   useModule("io.github.jadyli:config-plugin:0.1.16")
+                   useModule("io.github.jadyli:config-plugin:0.1.17")
                 }
             }
         }

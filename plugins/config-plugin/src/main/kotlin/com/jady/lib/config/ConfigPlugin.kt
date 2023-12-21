@@ -8,7 +8,7 @@ import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.plugins.JavaLibraryPlugin
+import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.compose.ComposeExtension
@@ -18,8 +18,8 @@ import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformJvmPlugin
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMultiplatformPlugin
+import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.io.File
 
@@ -33,6 +33,15 @@ class ConfigPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.run {
             val configExtension = extensions.create("config", ConfigExtension::class.java)
+            beforeEvaluate {
+                // kotlin 插件 java 版本设置不生效
+                tasks.withType<KotlinCompile>().forEach {
+                    it.kotlinOptions.setKotlinOptions(
+                        configExtension.version.java.toString(),
+                        project.plugins.hasPlugin(ComposePlugin::class.java)
+                    )
+                }
+            }
             afterEvaluate {
                 config(configExtension)
             }
@@ -46,22 +55,14 @@ class ConfigPlugin : Plugin<Project> {
         var hasComposePlugin = false
         var hasLibraryPlugin = false
         var hasAppPlugin = false
-        var basePluginReady = false
         kotlin.runCatching {
-            plugins.also {
-                println("ConfigPlugin, $projectName, plugins.size: ${plugins.size}")
-            }.forEach {
+            plugins.forEach {
                 when (it) {
                     is LibraryPlugin -> {
-                        basePluginReady = true
                         hasLibraryPlugin = true
                     }
                     is AppPlugin -> {
-                        basePluginReady = true
                         hasAppPlugin = true
-                    }
-                    is JavaLibraryPlugin, is KotlinPlatformJvmPlugin -> {
-                        basePluginReady = true
                     }
                     is KotlinMultiplatformPlugin -> {
                         hasKmpPlugin = true
@@ -74,11 +75,6 @@ class ConfigPlugin : Plugin<Project> {
         }.onFailure {
             println("$projectName, plugins traverse error.")
         }
-        if (basePluginReady) {
-            println("ConfigPlugin, $projectName, basePluginReady: true")
-        } else {
-            println("ConfigPlugin, $projectName, base plugin not ready!")
-        }
         if (hasLibraryPlugin) {
             configureLibraryPlugin(configExtension, hasKmpPlugin, hasComposePlugin)
             return
@@ -88,12 +84,7 @@ class ConfigPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.configureLibraryPlugin(
-        configExtension: ConfigExtension,
-        hasKmpPlugin: Boolean,
-        hasComposePlugin: Boolean
-    ) {
-        println("ConfigPlugin, $name, configureLibraryPlugin")
+    private fun Project.configureLibraryPlugin(configExtension: ConfigExtension, hasKmpPlugin: Boolean, hasComposePlugin: Boolean) {
         extensions.getByType<LibraryExtension>().run {
             configCommonExtension(this@configureLibraryPlugin, configExtension, hasKmpPlugin, hasComposePlugin)
             defaultConfig {
@@ -103,12 +94,7 @@ class ConfigPlugin : Plugin<Project> {
         }
     }
 
-    private fun Project.configureAppPlugin(
-        configExtension: ConfigExtension,
-        hasKmpPlugin: Boolean,
-        hasComposePlugin: Boolean
-    ) {
-        println("ConfigPlugin, $name, configureAppPlugin")
+    private fun Project.configureAppPlugin(configExtension: ConfigExtension, hasKmpPlugin: Boolean, hasComposePlugin: Boolean) {
         extensions.getByType<BaseAppModuleExtension>().run {
             configCommonExtension(this@configureAppPlugin, configExtension, hasKmpPlugin, hasComposePlugin)
             defaultConfig.proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
@@ -148,7 +134,7 @@ class ConfigPlugin : Plugin<Project> {
         }
         if (hasComposePlugin) {
             project.extensions.getByType<ComposeExtension>().run {
-                kotlinCompilerPlugin.set(configExtension.version.composeCompiler)
+                kotlinCompilerPlugin.set(configExtension.version.composePluginCompiler)
                 kotlinCompilerPluginArgs.add("suppressKotlinVersionCompatibilityCheck=${configExtension.version.kotlin}")
             }
         }
@@ -180,8 +166,11 @@ class ConfigPlugin : Plugin<Project> {
         val kotlinOptions = extensions.findByName("kotlinOptions") as? KotlinJvmOptions
         kotlinOptions?.setKotlinOptions(javaVersionString, hasComposePlugin)
 
-        project.tasks.withType<KotlinCompile>().forEach { compiler ->
-            compiler.kotlinOptions.setKotlinOptions(javaVersionString, hasComposePlugin)
+        project.tasks.findByName("kaptGenerateStubs")?.configure<KaptGenerateStubs> {
+            compilerOptions.setKotlinCommonCompilerOptions(hasComposePlugin)
+        }
+        project.tasks.withType<KotlinCompile>().configureEach {
+            kotlinOptions?.setKotlinOptions(javaVersionString, hasComposePlugin)
         }
 
         sourceSets.run {
@@ -199,9 +188,10 @@ class ConfigPlugin : Plugin<Project> {
             }
         }
 
+        // 这个选项是 androidx compose 的，跟 jetbrains 的 compose 插件不是同一个
         composeOptions.run {
             if (hasComposePlugin) {
-                kotlinCompilerExtensionVersion = configExtension.version.composeCompiler
+                kotlinCompilerExtensionVersion = configExtension.version.composeAndroidxCompiler
             }
         }
 
@@ -230,25 +220,25 @@ class ConfigPlugin : Plugin<Project> {
         jvmTarget = javaVersion
         options.setKotlinCommonCompilerOptions(useCompose)
     }
+}
 
-    private fun KotlinCommonOptions.setKotlinCommonOptions(useCompose: Boolean) {
-        options.setKotlinCommonCompilerOptions(useCompose)
-    }
+fun KotlinCommonOptions.setKotlinCommonOptions(useCompose: Boolean) {
+    options.setKotlinCommonCompilerOptions(useCompose)
+}
 
-    private fun KotlinCommonCompilerOptions.setKotlinCommonCompilerOptions(useCompose: Boolean) {
-        freeCompilerArgs.addAll(
-            arrayListOf(
-                "-Xopt-in=kotlin.ExperimentalStdlibApi",
-                "-Xopt-in=kotlin.RequiresOptIn",
-                "-Xopt-in=kotlin.contracts.ExperimentalContracts",
-                "-Xopt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-Xcontext-receivers",
-                "-Xskip-prerelease-check",
-            ).apply {
-                if (useCompose) {
-                    add("-Xopt-in=androidx.compose.foundation.ExperimentalFoundationApi")
-                }
+fun KotlinCommonCompilerOptions.setKotlinCommonCompilerOptions(useCompose: Boolean) {
+    freeCompilerArgs.addAll(
+        arrayListOf(
+            "-opt-in=kotlin.ExperimentalStdlibApi",
+            "-opt-in=kotlin.RequiresOptIn",
+            "-opt-in=kotlin.contracts.ExperimentalContracts",
+            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+            "-Xcontext-receivers",
+            "-Xskip-prerelease-check",
+        ).apply {
+            if (useCompose) {
+                add("-opt-in=androidx.compose.foundation.ExperimentalFoundationApi")
             }
-        )
-    }
+        }
+    )
 }
