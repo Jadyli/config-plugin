@@ -3,7 +3,6 @@
 compileSdk = "34"
 java-major = "11"
 java = "11"
-config-plugin = "0.1.17"
 # billing
 google-billing = "4.1.0"
 # plugin
@@ -12,7 +11,7 @@ android-plugin = "7.4.2"
 android-tools-common = "30.0.2"
 android-plugin-old = "4.1.1"
 bugly = "2.2.1"
-spotless = "6.11.0"
+spotless = "6.23.3"
 ktlint = "11.0.0"
 dependencies-update = "0.42.0"
 booster = "4.13.0"
@@ -159,6 +158,7 @@ plugin-source-android = { module = "com.android.tools.build:gradle", version.ref
 plugin-source-android-common = { module = "com.android.tools:common", version.ref = "android-tools-common" }
 plugin-source-android-ddmlib = { module = "com.android.tools.ddms:ddmlib", version.ref = "android-tools-common" }
 plugin-source-android-old = { module = "com.android.tools.build:gradle", version.ref = "android-plugin-old" }
+plugin-source-spotless = { module = "com.diffplug.spotless:spotless-plugin-gradle", version.ref = "spotless" }
 booster-api = { module = "com.didiglobal.booster:booster-api", version.ref = "booster" }
 booster-transform-asm = { module = "com.didiglobal.booster:booster-transform-asm", version.ref = "booster" }
 tinker-patch-lib = { module = "com.tencent.tinker:tinker-patch-lib", version.ref = "tinker" }
@@ -269,7 +269,6 @@ bugly = { id = "bugly", version.ref = "bugly" }
 spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
 dependencies-update = { id = "com.github.ben-manes.versions", version = "dependencies-update" }
 hilt-android = { id = "dagger.hilt.android.plugin", version.ref = "hilt" }
-config-plugin = { id = "io.github.jadyli.config-plugin", version.ref = "config-plugin" }
 tinker = { id = "com.tencent.tinker.patch", version.ref = "tinker" }
 ktlint = { id = "org.jlleitschuh.gradle.ktlint", version.ref = "ktlint" }
 booster = { id = "com.didiglobal.booster", version.ref = "booster" }

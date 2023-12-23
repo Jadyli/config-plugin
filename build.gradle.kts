@@ -1,6 +1,7 @@
 @file:Suppress("UnstableApiUsage")
 
-import com.jady.lib.config.ConfigExtension
+import com.jady.lib.config.CommonConfigExtension
+import com.jady.lib.config.CommonConfigExtension.Companion.DEFAULT_SPOTLESS_CONFIG_ACTION
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
@@ -9,23 +10,23 @@ plugins {
     alias(sharedCommonLibs.plugins.kotlin.android) apply false
     alias(sharedCommonLibs.plugins.kotlin.kapt) apply false
     alias(sharedCommonLibs.plugins.compose) apply false
-    alias(androidCommonLibs.plugins.config.plugin) apply false
+    alias(sharedCommonLibs.plugins.config.plugin) apply false
 }
 
-val libs = androidCommonLibs
+val androidLibs = androidCommonLibs
 val bizLibs = androidBizLibs
 val sharedLibs = sharedCommonLibs
 subprojects {
-    apply(plugin = libs.plugins.config.plugin.get().pluginId)
-    extensions.configure<ConfigExtension> {
+    apply(plugin = sharedLibs.plugins.config.plugin.get().pluginId)
+    extensions.configure<CommonConfigExtension> {
         version {
             minSdk = bizLibs.versions.minSdk.get().toInt()
             targetSdk = bizLibs.versions.targetSdk.get().toInt()
-            compileSdk = libs.versions.compileSdk.get().toInt()
-            java = libs.versions.java.asProvider().get().toInt()
+            compileSdk = androidLibs.versions.compileSdk.get().toInt()
+            java = androidLibs.versions.java.asProvider().get().toInt()
             kotlin = sharedLibs.versions.kotlin.asProvider().get()
-            composeCompiler = sharedLibs.versions.compose.compiler.get()
         }
+        spotless(DEFAULT_SPOTLESS_CONFIG_ACTION)
         vectorDrawableSupportLibrary = true
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

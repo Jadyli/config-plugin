@@ -5,7 +5,6 @@ plugins {
     alias(androidCommonLibs.plugins.android.library)
     alias(sharedCommonLibs.plugins.kotlin.android)
     alias(androidCommonLibs.plugins.hilt.android)
-    alias(androidCommonLibs.plugins.config.plugin)
     alias(sharedCommonLibs.plugins.kotlin.kapt)
 }
 

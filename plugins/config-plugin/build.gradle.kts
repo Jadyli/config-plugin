@@ -2,26 +2,23 @@
 
 @Suppress("DSL_SCOPE_VIOLATION")
 plugins {
-    `kotlin-dsl`
-    alias(androidCommonLibs.plugins.gradle.publish)
+    alias(sharedCommonLibs.plugins.kotlin.dsl)
+    alias(sharedCommonLibs.plugins.gradle.publish)
 }
 
 group = "io.github.jadyli"
-version = "0.1.17"
+version = "0.1.21"
 
 gradlePlugin {
+    website.set("https://github.com/Jadyli/config-plugin")
+    vcsUrl.set("https://github.com/Jadyli/config-plugin.git")
     plugins.register("config") {
         id = "io.github.jadyli.config-plugin"
         implementationClass = "com.jady.lib.config.ConfigPlugin"
         displayName = "Common config plugin for Android"
         description = "A plugin help you to config android extension"
+        tags.addAll("android", "config")
     }
-}
-
-pluginBundle {
-    website = "https://github.com/Jadyli/composing"
-    vcsUrl = "https://github.com/Jadyli/composing.git"
-    tags = arrayListOf("android", "config")
 }
 
 publishing {
@@ -39,6 +36,7 @@ kotlin {
     }
 }
 
+
 java {
     toolchain {
         languageVersion.set(JavaLanguageVersion.of(11))
@@ -49,5 +47,9 @@ dependencies {
     implementation(androidCommonLibs.plugin.source.android)
     implementation(sharedCommonLibs.plugin.source.kotlin)
     implementation(sharedCommonLibs.plugin.source.compose)
+    implementation(sharedCommonLibs.plugin.source.libres)
+    implementation(sharedCommonLibs.plugin.source.ksp)
+    implementation(sharedCommonLibs.plugin.source.maven.publish)
+    implementation(androidCommonLibs.plugin.source.spotless)
     compileOnly(gradleApi())
 }

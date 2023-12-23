@@ -4,7 +4,6 @@
 plugins {
     alias(androidCommonLibs.plugins.android.library)
     alias(sharedCommonLibs.plugins.kotlin.android)
-    alias(androidCommonLibs.plugins.config.plugin)
 }
 
 android {
