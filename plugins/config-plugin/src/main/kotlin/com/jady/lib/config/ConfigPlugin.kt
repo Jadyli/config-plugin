@@ -132,6 +132,16 @@ class ConfigPlugin : Plugin<Project> {
         val kotlinOptions = extensions.findByName("kotlinOptions") as? KotlinJvmOptions
         kotlinOptions?.setKotlinOptions(javaVersionString, hasComposePlugin)
 
+        if (hasComposePlugin) {
+            buildFeatures.apply {
+                compose = true
+            }
+            // 这个选项是 androidx compose 的，跟 jetbrains 的 compose 插件不是同一个
+            composeOptions.run {
+                kotlinCompilerExtensionVersion = commonConfigExtension.version.composeAndroidxCompiler
+            }
+        }
+
         project.tasks.findByName("kaptGenerateStubs")?.configure<KaptGenerateStubs> {
             compilerOptions.setKotlinCommonCompilerOptions(hasComposePlugin)
         }

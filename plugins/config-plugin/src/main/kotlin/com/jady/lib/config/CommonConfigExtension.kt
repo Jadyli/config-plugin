@@ -63,10 +63,14 @@ abstract class CommonConfigExtension {
                                         mapOf(
                                             "indent_size" to 4,
                                             "max-linelength" to 140,
+                                            "ktlint_standard_discouraged-comment-location" to "disabled",
+                                            "ktlint_standard_spacing-between-declarations-with-comments" to "disabled",
                                             "ktlint_function_naming_ignore_when_annotated_with" to "Composable",
                                             "spacing-between-declarations-with-annotations" to "disabled",
                                             "spacing-between-declarations-with-comments" to "disabled",
-                                            "multiline-if-else" to "disabled"
+                                            "multiline-if-else" to "disabled",
+                                            "ij_kotlin_allow_trailing_comma_on_call_site" to false,
+                                            "ij_kotlin_allow_trailing_comma" to false
                                         )
                                     )
                                 trimTrailingWhitespace()
@@ -86,7 +90,9 @@ abstract class CommonConfigExtension {
                                             "ktlint_function_naming_ignore_when_annotated_with" to "Composable",
                                             "spacing-between-declarations-with-annotations" to "disabled",
                                             "spacing-between-declarations-with-comments" to "disabled",
-                                            "multiline-if-else" to "disabled"
+                                            "multiline-if-else" to "disabled",
+                                            "ij_kotlin_allow_trailing_comma_on_call_site" to false,
+                                            "ij_kotlin_allow_trailing_comma" to false
                                         )
                                     )
                                 trimTrailingWhitespace()
@@ -107,6 +113,7 @@ data class VersionExtension(
     var compileSdk: Int = 33,
     var java: Int = 11,
     var kotlin: String = "1.9.10",
+    var composeAndroidxCompiler: String? = null
 )
 
 data class KspCompiler(var isMultiplatform: Boolean, var dependency: Provider<MinimalExternalModuleDependency>)

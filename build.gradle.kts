@@ -25,6 +25,7 @@ subprojects {
             compileSdk = androidLibs.versions.compileSdk.get().toInt()
             java = androidLibs.versions.java.asProvider().get().toInt()
             kotlin = sharedLibs.versions.kotlin.asProvider().get()
+            composeAndroidxCompiler = sharedLibs.versions.compose.androidx.compiler.get()
         }
         spotless(DEFAULT_SPOTLESS_CONFIG_ACTION)
         vectorDrawableSupportLibrary = true

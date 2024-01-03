@@ -1,5 +1,5 @@
 [versions]
-config-plugin = "0.1.21"
+config-plugin = "0.1.22"
 # https://kotlinlang.org/docs/gradle-configure-project.html#apply-the-plugin
 kotlin = "1.9.10"
 # https://plugins.gradle.org/plugin/org.gradle.kotlin.kotlin-dsl
