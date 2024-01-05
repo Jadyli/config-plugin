@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015-2024 BiliBili Inc.
+ */
+
 package com.jady.lib.config
 
 import com.android.build.gradle.AppPlugin
@@ -36,7 +40,9 @@ import org.gradle.kotlin.dsl.withType
 import org.jetbrains.compose.ComposeExtension
 import org.jetbrains.compose.ComposePlugin
 import org.jetbrains.compose.ExperimentalComposeLibrary
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
+import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinJvmOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinTopLevelExtension
@@ -145,8 +151,8 @@ class ConfigPlugin : Plugin<Project> {
         project.tasks.findByName("kaptGenerateStubs")?.configure<KaptGenerateStubs> {
             compilerOptions.setKotlinCommonCompilerOptions(hasComposePlugin)
         }
-        project.tasks.withType<KotlinCompile>().configureEach {
-            kotlinOptions?.setKotlinOptions(javaVersionString, hasComposePlugin)
+        project.tasks.withType<KotlinCompile>().forEach {
+            it.kotlinOptions.setKotlinOptions(javaVersionString, hasComposePlugin)
         }
 
         sourceSets.run {
@@ -187,7 +193,7 @@ class ConfigPlugin : Plugin<Project> {
 
     private fun KotlinJvmOptions.setKotlinOptions(javaVersion: String, useCompose: Boolean) {
         jvmTarget = javaVersion
-        options.setKotlinCommonCompilerOptions(useCompose)
+        setKotlinCommonCompilerOptions(useCompose)
     }
 
     data class PluginsData(
@@ -198,20 +204,25 @@ class ConfigPlugin : Plugin<Project> {
 }
 
 fun KotlinCommonCompilerOptions.setKotlinCommonCompilerOptions(useCompose: Boolean) {
-    freeCompilerArgs.addAll(
-        arrayListOf(
-            "-opt-in=kotlin.ExperimentalStdlibApi",
-            "-opt-in=kotlin.RequiresOptIn",
-            "-opt-in=kotlin.contracts.ExperimentalContracts",
-            "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-            "-Xcontext-receivers",
-            "-Xskip-prerelease-check",
-        ).apply {
-            if (useCompose) {
-                add("-opt-in=androidx.compose.foundation.ExperimentalFoundationApi")
-            }
-        }
-    )
+    freeCompilerArgs.addAll(getCompilerArgs(useCompose))
+}
+
+fun KotlinCommonOptions.setKotlinCommonCompilerOptions(useCompose: Boolean) {
+    freeCompilerArgs += getCompilerArgs(useCompose)
+}
+
+private fun getCompilerArgs(useCompose: Boolean = true) = arrayListOf(
+    "-opt-in=kotlin.ExperimentalStdlibApi",
+    "-opt-in=kotlin.RequiresOptIn",
+    "-opt-in=kotlin.contracts.ExperimentalContracts",
+    "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
+    "-Xcontext-receivers",
+    "-Xskip-prerelease-check",
+    "-Xexpect-actual-classes"
+).apply {
+    if (useCompose) {
+        add("-opt-in=androidx.compose.foundation.ExperimentalFoundationApi")
+    }
 }
 
 fun <T : Any, U : NamedDomainObjectContainer<T>> U.configureSourceSet(
@@ -294,6 +305,7 @@ fun Project.applyLibResPlugin(closure: Action<ResourcesPluginExtension>) {
     closure.execute(project.extensions.getByType(ResourcesPluginExtension::class.java))
 }
 
+@OptIn(ExperimentalKotlinGradlePluginApi::class)
 fun KotlinMultiplatformExtension.configKMPPlugin(
     project: Project,
     javaVersion: Int,
@@ -308,13 +320,17 @@ fun KotlinMultiplatformExtension.configKMPPlugin(
         iosArm64()
         iosSimulatorArm64()
     }
+    compilerOptions(object : Action<KotlinCommonCompilerOptions> {
+        override fun execute(options: KotlinCommonCompilerOptions) {
+            options.setKotlinCommonCompilerOptions(true)
+        }
+    })
     cocoapodsExtensionOrNull?.configCocoapods(project)
     targets.forEach { target ->
         target.compilations.forEach {
-            it.kotlinOptions.options.setKotlinCommonCompilerOptions(true)
+            it.kotlinOptions.setKotlinCommonCompilerOptions(true)
             it.compilerOptions.configure {
                 setKotlinCommonCompilerOptions(true)
-                jvmToolchain(javaVersion)
             }
         }
     }

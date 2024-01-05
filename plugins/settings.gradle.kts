@@ -15,6 +15,9 @@ dependencyResolutionManagement {
     repositories {
         mavenCentral()
         google()
+        maven { setUrl("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
+        maven { setUrl("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental") }
+        maven { setUrl("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev") }
         maven { setUrl("https://jitpack.io") }
     }
     versionCatalogs {
