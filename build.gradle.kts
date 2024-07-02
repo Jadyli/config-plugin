@@ -9,7 +9,8 @@ plugins {
     alias(androidCommonLibs.plugins.android.library) apply false
     alias(sharedCommonLibs.plugins.kotlin.android) apply false
     alias(sharedCommonLibs.plugins.kotlin.kapt) apply false
-    alias(sharedCommonLibs.plugins.compose) apply false
+    alias(sharedCommonLibs.plugins.jetbrains.compose) apply false
+    alias(sharedCommonLibs.plugins.compose.compiler) apply false
     alias(sharedCommonLibs.plugins.config.plugin) apply false
 }
 
@@ -25,7 +26,6 @@ subprojects {
             compileSdk = androidLibs.versions.compileSdk.get().toInt()
             java = androidLibs.versions.java.asProvider().get().toInt()
             kotlin = sharedLibs.versions.kotlin.asProvider().get()
-            composeAndroidxCompiler = sharedLibs.versions.compose.androidx.compiler.get()
         }
         spotless(DEFAULT_SPOTLESS_CONFIG_ACTION)
         vectorDrawableSupportLibrary = true

@@ -12,8 +12,9 @@ import com.android.build.gradle.internal.dsl.BaseAppModuleExtension
 import com.diffplug.gradle.spotless.SpotlessExtension
 import com.diffplug.gradle.spotless.SpotlessPlugin
 import com.google.devtools.ksp.gradle.KspExtension
+import com.google.devtools.ksp.gradle.KspTaskMetadata
 import com.vanniktech.maven.publish.MavenPublishBaseExtension
-import com.vanniktech.maven.publish.MavenPublishPlugin
+import com.vanniktech.maven.publish.MavenPublishBasePlugin
 import io.github.skeptick.libres.plugin.LibresResourcesGenerationTask
 import io.github.skeptick.libres.plugin.ResourcesPlugin
 import io.github.skeptick.libres.plugin.ResourcesPluginExtension
@@ -22,6 +23,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.artifacts.dsl.RepositoryHandler
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
 import org.gradle.api.plugins.ExtensionAware
@@ -30,7 +32,7 @@ import org.gradle.api.publish.maven.MavenPom
 import org.gradle.api.publish.maven.MavenPomDeveloper
 import org.gradle.api.publish.maven.MavenPomDeveloperSpec
 import org.gradle.api.publish.maven.MavenPomScm
-import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.gradle.api.publish.tasks.GenerateModuleMetadata
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.getValue
@@ -39,7 +41,6 @@ import org.gradle.kotlin.dsl.typeOf
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.compose.ComposeExtension
 import org.jetbrains.compose.ComposePlugin
-import org.jetbrains.compose.ExperimentalComposeLibrary
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonCompilerOptions
 import org.jetbrains.kotlin.gradle.dsl.KotlinCommonOptions
@@ -138,14 +139,11 @@ class ConfigPlugin : Plugin<Project> {
         val kotlinOptions = extensions.findByName("kotlinOptions") as? KotlinJvmOptions
         kotlinOptions?.setKotlinOptions(javaVersionString, hasComposePlugin)
 
-        if (hasComposePlugin) {
-            buildFeatures.apply {
+        buildFeatures.apply {
+            if (hasComposePlugin) {
                 compose = true
             }
-            // 这个选项是 androidx compose 的，跟 jetbrains 的 compose 插件不是同一个
-            composeOptions.run {
-                kotlinCompilerExtensionVersion = commonConfigExtension.version.composeAndroidxCompiler
-            }
+            buildConfig = true
         }
 
         project.tasks.findByName("kaptGenerateStubs")?.configure<KaptGenerateStubs> {
@@ -160,11 +158,12 @@ class ConfigPlugin : Plugin<Project> {
                 if (kotlinExtension != null) {
                     manifest.srcFile("src/androidMain/AndroidManifest.xml")
                     res.srcDirs("src/androidMain/res")
-                    java.srcDirs("src/androidMain/kotlin", "src/commonMain/kotlin")
+                    kotlin.srcDirs("src/androidMain/kotlin", "src/commonMain/kotlin")
                     resources.srcDirs("src/commonMain/resources")
                 } else {
                     res.srcDirs("src/main/res")
-                    java.srcDirs("src/main/kotlin", "src/main/java")
+                    java.srcDirs("src/main/java", "src/main/kotlin")
+                    kotlin.srcDirs("src/main/java", "src/main/kotlin")
                 }
                 jniLibs.srcDirs("libs")
             }
@@ -195,12 +194,6 @@ class ConfigPlugin : Plugin<Project> {
         jvmTarget = javaVersion
         setKotlinCommonCompilerOptions(useCompose)
     }
-
-    data class PluginsData(
-        var hasComposePlugin: Boolean = false,
-        var hasAndroidAppPlugin: Boolean = false,
-        var hasLibraryPlugin: Boolean = false,
-    )
 }
 
 fun KotlinCommonCompilerOptions.setKotlinCommonCompilerOptions(useCompose: Boolean) {
@@ -241,7 +234,7 @@ fun <T : Any, U : NamedDomainObjectContainer<T>> U.createSourceSet(sourceSetName
     create(sourceSetName).apply { configuration?.invoke(this) }
 
 fun Project.applyMavenPlugin(closure: Action<MavenExtension>) {
-    pluginManager.apply(MavenPublishPlugin::class.java)
+    pluginManager.apply(MavenPublishBasePlugin::class.java)
     val maven = MavenExtension().apply { closure.execute(this) }
     extensions.findByType(PublishingExtension::class.java)?.run {
         maven.mavenRepository?.let { repo ->
@@ -298,6 +291,9 @@ fun Project.applyMavenPlugin(closure: Action<MavenExtension>) {
             })
         }
     }
+    tasks.withType<GenerateModuleMetadata> {
+        enabled = true
+    }
 }
 
 fun Project.applyLibResPlugin(closure: Action<ResourcesPluginExtension>) {
@@ -309,12 +305,13 @@ fun Project.applyLibResPlugin(closure: Action<ResourcesPluginExtension>) {
 fun KotlinMultiplatformExtension.configKMPPlugin(
     project: Project,
     javaVersion: Int,
-    composePluginCompiler: String?,
     applyDefaultTargets: Boolean
 ) {
     jvmToolchain(javaVersion)
     if (applyDefaultTargets) {
-        androidTarget()
+        androidTarget {
+            publishLibraryVariants("release")
+        }
         jvm("desktop")
         iosX64()
         iosArm64()
@@ -326,22 +323,8 @@ fun KotlinMultiplatformExtension.configKMPPlugin(
         }
     })
     cocoapodsExtensionOrNull?.configCocoapods(project)
-    targets.forEach { target ->
-        target.compilations.forEach {
-            it.kotlinOptions.setKotlinCommonCompilerOptions(true)
-            it.compilerOptions.configure {
-                setKotlinCommonCompilerOptions(true)
-            }
-        }
-    }
-    project.composeExtensionOrNull?.run {
-        composePluginCompiler?.let { kotlinCompilerPlugin.set(it) }
-    }
     configKMPSourceSets(project)
 }
-
-private val Project.composeExtensionOrNull: ComposeExtension?
-    get() = extensions.findByType(ComposeExtension::class.java)
 
 private val KotlinMultiplatformExtension.cocoapodsExtensionOrNull: CocoapodsExtension?
     get() = (this as ExtensionAware).extensions.findByType(CocoapodsExtension::class.java)
@@ -362,13 +345,16 @@ private fun KotlinMultiplatformExtension.configKMPSourceSets(project: Project) {
     sourceSets.run {
         val compose = project.extensions.findByType(typeOf<ComposeExtension>())?.dependencies
         val commonMain by getting {
+            kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+            project.tasks.withType<KspTaskMetadata> {
+                kotlin.srcDir(destinationDirectory)
+            }
             dependencies {
                 compose?.run {
                     api(runtime)
                     api(foundation)
                     api(material)
                     api(material3)
-                    @OptIn(ExperimentalComposeLibrary::class)
                     api(components.resources)
                 }
             }
@@ -391,6 +377,7 @@ private fun KotlinMultiplatformExtension.configKMPSourceSets(project: Project) {
                     val iosArm64Main by getting
                     val iosSimulatorArm64Main by getting
                     configureSourceSet("iosMain") {
+                        kotlin.srcDir("build/generated/ksp/iosX64/iosX64Main/kotlin")
                         dependsOn(commonMain)
                         iosX64Main.dependsOn(this)
                         iosArm64Main.dependsOn(this)
@@ -399,7 +386,7 @@ private fun KotlinMultiplatformExtension.configKMPSourceSets(project: Project) {
                 }
                 TARGET_NAME_DESKTOP -> {
                     val desktopMain by getting {
-                        kotlin.srcDir("build/generated/ksp/desktop/desktopMain")
+                        kotlin.srcDir("build/generated/ksp/desktop/desktopMain/kotlin")
                         dependsOn(jvmCommonMain)
                         dependencies {
                             compose?.run {
@@ -410,20 +397,20 @@ private fun KotlinMultiplatformExtension.configKMPSourceSets(project: Project) {
                 }
                 TARGET_NAME_ANDROID -> {
                     val androidMain by getting {
-                        kotlin.srcDir("build/generated/ksp/android/androidDebug")
-                        kotlin.srcDir("build/generated/ksp/android/androidRelease")
+                        kotlin.srcDir("build/generated/ksp/android/androidDebug/kotlin")
+                        kotlin.srcDir("build/generated/ksp/android/androidRelease/kotlin")
                         dependsOn(jvmCommonMain)
                     }
                 }
                 TARGET_NAME_JS -> {
                     val jsMain by getting {
-                        kotlin.srcDir("build/generated/ksp/js/jsMain")
+                        kotlin.srcDir("build/generated/ksp/js/jsMain/kotlin")
                         dependsOn(jsWasmMain)
                     }
                 }
                 TARGET_NAME_WASM_JS -> {
                     val wasmJsMain by getting {
-                        kotlin.srcDir("build/generated/ksp/wasm/wasmJsMain")
+                        kotlin.srcDir("build/generated/ksp/wasm/wasmJsMain/kotlin")
                         dependsOn(jsWasmMain)
                     }
                 }
@@ -432,17 +419,18 @@ private fun KotlinMultiplatformExtension.configKMPSourceSets(project: Project) {
     }
 }
 
-fun DependencyHandlerScope.addKspDependencies(kspCompilerList: List<KspCompiler>) {
+fun DependencyHandler.addKspDependencies(kspCompilerList: List<KspCompiler>) {
     println("ksp: $kspCompilerList")
     kspCompilerList.forEach { (isMultiplatform, dependency) ->
         if (!isMultiplatform) {
             add("ksp", dependency)
         } else {
-            add("kspDesktop", dependency)
-            add("kspAndroid", dependency)
-            add("kspIosX64", dependency)
-            add("kspIosArm64", dependency)
-            add("kspIosSimulatorArm64", dependency)
+            add("kspCommonMainMetadata", dependency)
+            // add("kspDesktop", dependency)
+            // add("kspAndroid", dependency)
+            // add("kspIosX64", dependency)
+            // add("kspIosArm64", dependency)
+            // add("kspIosSimulatorArm64", dependency)
         }
     }
 }

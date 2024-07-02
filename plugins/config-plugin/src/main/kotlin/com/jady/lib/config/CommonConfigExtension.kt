@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2015-2024 BiliBili Inc.
+ */
+
 package com.jady.lib.config
 
 import com.diffplug.gradle.spotless.FormatExtension
@@ -48,6 +52,7 @@ abstract class CommonConfigExtension {
                                 removeUnusedImports()
                                 googleJavaFormat()
                                 indentWithSpaces(4)
+                                toggleOffOn()
                             }
                         }
                     })
@@ -75,6 +80,7 @@ abstract class CommonConfigExtension {
                                     )
                                 trimTrailingWhitespace()
                                 endWithNewline()
+                                toggleOffOn()
                             }
                         }
                     })
@@ -112,8 +118,7 @@ data class VersionExtension(
     var targetSdk: Int = 30,
     var compileSdk: Int = 33,
     var java: Int = 11,
-    var kotlin: String = "1.9.10",
-    var composeAndroidxCompiler: String? = null
+    var kotlin: String = "2.0.0",
 )
 
 data class KspCompiler(var isMultiplatform: Boolean, var dependency: Provider<MinimalExternalModuleDependency>)
