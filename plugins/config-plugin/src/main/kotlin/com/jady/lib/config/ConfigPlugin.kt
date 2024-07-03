@@ -425,12 +425,12 @@ fun DependencyHandler.addKspDependencies(kspCompilerList: List<KspCompiler>) {
         if (!isMultiplatform) {
             add("ksp", dependency)
         } else {
-            add("kspCommonMainMetadata", dependency)
-            // add("kspDesktop", dependency)
-            // add("kspAndroid", dependency)
-            // add("kspIosX64", dependency)
-            // add("kspIosArm64", dependency)
-            // add("kspIosSimulatorArm64", dependency)
+            // add("kspCommonMainMetadata", dependency)
+            add("kspDesktop", dependency)
+            add("kspAndroid", dependency)
+            add("kspIosX64", dependency)
+            add("kspIosArm64", dependency)
+            add("kspIosSimulatorArm64", dependency)
         }
     }
 }
