@@ -8,6 +8,10 @@ plugins {
     alias(sharedCommonLibs.plugins.kotlin.kapt)
 }
 
+android {
+    namespace = "com.jady.common"
+}
+
 dependencies {
     // official library
     implementation(sharedCommonLibs.bundles.compose.core)

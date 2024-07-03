@@ -9,6 +9,7 @@ plugins {
 }
 
 android {
+    namespace = "com.jady.app"
     defaultConfig {
         applicationId = "com.jady.app.composing"
         versionCode = 1
