@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "io.github.jadyli"
-version = "0.1.25"
+version = "0.1.26"
 
 gradlePlugin {
     website.set("https://github.com/Jadyli/config-plugin")
