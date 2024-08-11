@@ -58,12 +58,13 @@ import java.io.File
  * email: 1257984872@qq.com
  */
 private const val TARGET_NAME_IOS_X64 = "iosX64"
+private const val TARGET_NAME_IOS_ARM64 = "iosArm64"
+private const val TARGET_NAME_IOS_SIMULATOR_ARM64 = "iosSimulatorArm64"
 private const val TARGET_NAME_DESKTOP = "desktop"
 private const val TARGET_NAME_ANDROID = "android"
 private const val TARGET_NAME_JS = "js"
 private const val TARGET_NAME_WASM_JS = "wasmJs"
 
-@Suppress("UnstableApiUsage")
 class ConfigPlugin : Plugin<Project> {
     override fun apply(project: Project) {
         project.run {
@@ -166,6 +167,12 @@ class ConfigPlugin : Plugin<Project> {
                     kotlin.srcDirs("src/main/java", "src/main/kotlin")
                 }
                 jniLibs.srcDirs("libs")
+            }
+            getByName("debug").run {
+                kotlin.srcDir("build/generated/ksp/android/androidDebug/kotlin")
+            }
+            getByName("release").run {
+                kotlin.srcDir("build/generated/ksp/android/androidRelease/kotlin")
             }
         }
 
@@ -370,18 +377,27 @@ private fun KotlinMultiplatformExtension.configKMPSourceSets(project: Project) {
         val jsWasmMain = configureSourceSet("jsWasmMain") {
             dependsOn(commonMain)
         }
+        val iosMain = configureSourceSet("iosMain") {
+            dependsOn(commonMain)
+        }
         targets.names.forEach {
             when (it) {
                 TARGET_NAME_IOS_X64 -> {
-                    val iosX64Main by getting
-                    val iosArm64Main by getting
-                    val iosSimulatorArm64Main by getting
-                    configureSourceSet("iosMain") {
+                    val iosX64Main by getting {
                         kotlin.srcDir("build/generated/ksp/iosX64/iosX64Main/kotlin")
-                        dependsOn(commonMain)
-                        iosX64Main.dependsOn(this)
-                        iosArm64Main.dependsOn(this)
-                        iosSimulatorArm64Main.dependsOn(this)
+                        dependsOn(iosMain)
+                    }
+                }
+                TARGET_NAME_IOS_ARM64 -> {
+                    val iosArm64Main by getting {
+                        kotlin.srcDir("build/generated/ksp/iosArm64/iosArm64Main/kotlin")
+                        dependsOn(iosMain)
+                    }
+                }
+                TARGET_NAME_IOS_SIMULATOR_ARM64 -> {
+                    val iosSimulatorArm64Main by getting {
+                        kotlin.srcDir("build/generated/ksp/iosSimulatorArm64/iosSimulatorArm64Main/kotlin")
+                        dependsOn(iosMain)
                     }
                 }
                 TARGET_NAME_DESKTOP -> {
@@ -397,8 +413,6 @@ private fun KotlinMultiplatformExtension.configKMPSourceSets(project: Project) {
                 }
                 TARGET_NAME_ANDROID -> {
                     val androidMain by getting {
-                        kotlin.srcDir("build/generated/ksp/android/androidDebug/kotlin")
-                        kotlin.srcDir("build/generated/ksp/android/androidRelease/kotlin")
                         dependsOn(jvmCommonMain)
                     }
                 }
@@ -421,16 +435,19 @@ private fun KotlinMultiplatformExtension.configKMPSourceSets(project: Project) {
 
 fun DependencyHandler.addKspDependencies(kspCompilerList: List<KspCompiler>) {
     println("ksp: $kspCompilerList")
-    kspCompilerList.forEach { (isMultiplatform, dependency) ->
+    kspCompilerList.forEach { (isMultiplatform, onlyUseInCommon, dependency) ->
         if (!isMultiplatform) {
             add("ksp", dependency)
         } else {
-            // add("kspCommonMainMetadata", dependency)
-            add("kspDesktop", dependency)
-            add("kspAndroid", dependency)
-            add("kspIosX64", dependency)
-            add("kspIosArm64", dependency)
-            add("kspIosSimulatorArm64", dependency)
+            if (onlyUseInCommon) {
+                add("kspCommonMainMetadata", dependency)
+            } else {
+                add("kspDesktop", dependency)
+                add("kspAndroid", dependency)
+                add("kspIosX64", dependency)
+                add("kspIosArm64", dependency)
+                add("kspIosSimulatorArm64", dependency)
+            }
         }
     }
 }

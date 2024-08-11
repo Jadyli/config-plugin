@@ -50,7 +50,6 @@ abstract class CommonConfigExtension {
                         override fun execute(extension: JavaExtension) {
                             extension.run {
                                 removeUnusedImports()
-                                googleJavaFormat()
                                 indentWithSpaces(4)
                                 toggleOffOn()
                             }
@@ -121,7 +120,11 @@ data class VersionExtension(
     var kotlin: String = "2.0.0",
 )
 
-data class KspCompiler(var isMultiplatform: Boolean, var dependency: Provider<MinimalExternalModuleDependency>)
+data class KspCompiler(
+    var isMultiplatform: Boolean,
+    var onlyUseInCommon: Boolean,
+    var dependency: Provider<MinimalExternalModuleDependency>
+)
 
 data class MavenExtension(var mavenRepository: MavenRepository? = null, var pom: PomExtension? = null)
 
