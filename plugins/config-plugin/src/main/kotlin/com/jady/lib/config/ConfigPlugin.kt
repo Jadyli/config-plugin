@@ -340,6 +340,10 @@ private fun CocoapodsExtension.configCocoapods(project: Project) {
     name = project.name
     version = "1.0.0"
     ios.deploymentTarget = "14.1"
+    homepage = "https://github.com"
+    summary = "$name module"
+    license = "Apache License 2.0"
+
     val preferDir = File(project.rootDir.path + "/iosApp/Podfile")
     podfile = if (preferDir.exists()) preferDir else File(project.rootDir.parentFile.path + "/iosApp/Podfile")
     framework {
