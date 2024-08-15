@@ -111,7 +111,6 @@ abstract class CommonConfigExtension {
     }
 }
 
-
 data class VersionExtension(
     var minSdk: Int = 21,
     var targetSdk: Int = 30,
@@ -128,7 +127,13 @@ data class KspCompiler(
 
 data class MavenExtension(var mavenRepository: MavenRepository? = null, var pom: PomExtension? = null)
 
-data class MavenRepository(var name: String = "", var releaseUrl: String = "", var snapshotUrl: String = releaseUrl)
+data class MavenRepository(
+    var name: String = "",
+    var releaseUrl: String = "",
+    var snapshotUrl: String = releaseUrl,
+    var userName: String? = null,
+    var password: String? = null
+)
 
 data class PomExtension(
     var repoUrl: String = "",

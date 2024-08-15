@@ -256,6 +256,10 @@ fun Project.applyMavenPlugin(closure: Action<MavenExtension>) {
                                 } else {
                                     uri(repo.releaseUrl)
                                 }
+                                credentials {
+                                    username = repo.userName
+                                    password = repo.password
+                                }
                             }
                         }
                     })
